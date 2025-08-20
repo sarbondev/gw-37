@@ -1,6 +1,6 @@
-import { User } from "../models/user.js";
+import User from "../models/user.js";
 
-export const getAllUser = async (req, res) => {
+export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
     res.status(200).json({ users, status: "failed" });
@@ -14,7 +14,32 @@ export const getAllUser = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const newUser = await User.create(req.body);
+    const { fullName, password, phoneNumber } = req.body;
+
+    if (!fullName || !password || !phoneNumber) {
+      return res.status(409).json({
+        message: "Hamma maydonlar to'ldiriishi shart!",
+        status: "failed",
+      });
+    }
+
+    const isUserExist = await User.find(phoneNumber);
+
+    if (isUserExist) {
+      return res.status(409).json({
+        message: "Bunday foydalanuvchi oldin ro'yhatdan o'tgan!",
+        status: "failed",
+      });
+    }
+
+    const newUser = new User({
+      fullName,
+      password,
+      phoneNumber,
+    });
+
+    await newUser.save();
+
     res.status(201).json({
       status: "Foydalanuvchi yaratildi",
       data: {
