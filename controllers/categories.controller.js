@@ -1,5 +1,5 @@
-import Categories from "./categoriesModel.js";
-import Category from "./categoriesModel.js";
+import Categories from "../models/categoriesModel.js";
+import Category from "../models/categoriesModel.js";
 
 // 🔹 BARCHA KATEGORIYALARNI OLIB KELISH
 export const getAllCategories = async (req, res) => {
