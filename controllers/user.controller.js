@@ -23,7 +23,7 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const isUserExist = await Users.find(phoneNumber);
+    const isUserExist = await Users.findOne({ phoneNumber });
 
     if (isUserExist) {
       return res.status(409).json({
