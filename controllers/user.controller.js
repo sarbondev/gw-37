@@ -1,11 +1,11 @@
-import User from "../models/user.js";
+import { Users } from "../models/user.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await Users.find();
     res.status(200).json({ users, status: "failed" });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       status: "failed",
       message: err.message,
     });
@@ -23,7 +23,7 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const isUserExist = await User.find(phoneNumber);
+    const isUserExist = await Users.find(phoneNumber);
 
     if (isUserExist) {
       return res.status(409).json({
@@ -32,7 +32,7 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const newUser = new User({
+    const newUser = new Users({
       fullName,
       password,
       phoneNumber,
@@ -45,7 +45,7 @@ export const createUser = async (req, res) => {
       newUser,
     });
   } catch (err) {
-    res.status(400).json({
+    return res.status(400).json({
       status: "error",
       message: err.message,
     });
@@ -64,7 +64,7 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    const isUserExist = await User.findOne(phoneNumber);
+    const isUserExist = await Users.findOne(phoneNumber);
 
     if (!isUserExist) {
       return res.status(404).json({
@@ -73,7 +73,7 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    const isPasswordCorrect = await User.isPasswordCorrect(
+    const isPasswordCorrect = await Users.isPasswordCorrect(
       password,
       isUserExist.password
     );
@@ -91,7 +91,7 @@ export const updateUser = async (req, res) => {
       phoneNumber,
     };
 
-    const user = await User.findByIdAndUpdate(id, updatedUser, { new: true });
+    const user = await Users.findByIdAndUpdate(id, updatedUser, { new: true });
 
     return res.status(200).json({
       status: "success",
@@ -99,7 +99,7 @@ export const updateUser = async (req, res) => {
       user,
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       status: "error",
       message: err.message,
     });
@@ -109,7 +109,7 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByIdAndDelete(id);
+    const user = await Users.findByIdAndDelete(id);
 
     if (!user) {
       return res.status(404).json({
@@ -117,15 +117,12 @@ export const deleteUser = async (req, res) => {
         message: "Foydalanuvchi topilmadi",
       });
     }
-
-    await user.deleteOne(req.body);
-
-    res.status(204).json({
+    return res.status(204).json({
       status: "success",
       message: "Foydalanuvchi o'chirildi",
     });
   } catch (err) {
-    res.status(500).json({
+    return res.status(500).json({
       status: "error",
       message: err.message,
     });

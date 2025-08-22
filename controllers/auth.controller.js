@@ -1,32 +1,34 @@
-import { Users } from "../users/userModel.js";
-import jwt from "jsonwebtoken";
-
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_KEY, {
-    expiresIn: "30d",
-  });
-};
+import { generateToken } from "../middlewares/generateToken.js";
+import { Users } from "../models/user.js";
 
 export const login = async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const { phoneNumber, password } = req.body;
 
-  if (!username || !password) {
+  if (!phoneNumber || !password) {
     return res.status(400).json({
-      status: "error",
-      message: "Username and password not provided",
+      status: "failed",
+      message: "Telefon raqam yoki parol kiritilmagan.",
     });
   } else {
-    const user = await Users.findOne({ username: username });
+    const user = await Users.findOne({ phoneNumber });
 
-    if (!user || !user.correctPassword(password, user.password)) {
+    if (!user) {
+      return res.status(404).json({ message: "Foydalanuvchi topilmadi." });
+    }
+
+    const isPasswordCorrect = await Users.isPasswordCorrect(
+      password,
+      user.password
+    );
+
+    if (!isPasswordCorrect) {
       res.status(400).json({
-        status: "error",
-        message: "Invalid username or password",
+        status: "failed",
+        message: "Parol yoki telefon raqam noto'g'ri.",
       });
     } else {
-      const token = signToken(user._id);
-      res.status(200).json({
+      const token = generateToken(user._id);
+      return res.status(200).json({
         status: "success",
         token,
       });

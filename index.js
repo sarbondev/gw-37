@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Salom, bu Express server!");
+  return res.send("Salom, bu Express server!");
 });
 
 connectDB();
