@@ -131,3 +131,18 @@ export const deleteUser = async (req, res) => {
     });
   }
 };
+
+export const getProfile = async (req, res) => {
+  try {
+    const user = await Users.findById(req.userId);
+    if (!user) {
+      return res.status(409).json({ message: "User not found" });
+    }
+    return res.status(201).json(user);
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};

@@ -5,10 +5,11 @@ import {
   updateCategory,
   deleteCategory,
 } from "../controllers/categories.controller.js";
+import isAuth from "../middlewares/isAuth.js";
 
 export const CategoryRoutes = express.Router();
 
 CategoryRoutes.get("/", getAllCategories);
-CategoryRoutes.post("/", createCategory);
-CategoryRoutes.put("/:id", updateCategory);
-CategoryRoutes.delete("/:id", deleteCategory);
+CategoryRoutes.post("/", isAuth, createCategory);
+CategoryRoutes.put("/:id", isAuth, updateCategory);
+CategoryRoutes.delete("/:id", isAuth, deleteCategory);

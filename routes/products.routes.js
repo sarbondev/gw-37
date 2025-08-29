@@ -6,11 +6,12 @@ import {
   deleteProduct,
   getProductById,
 } from "../controllers/products.controller.js";
+import isAuth from "../middlewares/isAuth.js";
 
 export const ProductRoutes = express.Router();
 
 ProductRoutes.get("/", getAllProducts);
-ProductRoutes.post("/", createProduct);
-ProductRoutes.put("/:id", updateProduct);
-ProductRoutes.delete("/:id", deleteProduct);
+ProductRoutes.post("/", isAuth, createProduct);
+ProductRoutes.put("/:id", isAuth, updateProduct);
+ProductRoutes.delete("/:id", isAuth, deleteProduct);
 ProductRoutes.get("/:id", getProductById);
